@@ -1,23 +1,19 @@
 name: Playwright Tests
 
 on:
-  pull_request:
-    branches: [main]
   push:
     branches: [main]
 
 jobs:
-  test:
+  desktop-tests:
+    name: Playwright Desktop Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-
-      - name: Remove package-lock
-        run: rm -f package-lock.json
+          node-version: 20
 
       - name: Install dependencies
         run: npm ci
@@ -25,10 +21,10 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests
-        run: npm run test
+      - name: Run Desktop tests
+        run: npm run test:desktop
 
-      # ----- Allure Report (optional) -----
+      # Allure reporting
       - name: Get Allure history
         uses: actions/checkout@v4
         continue-on-error: true
@@ -36,7 +32,7 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-      - name: Allure Report action from marketplace
+      - name: Generate Allure Report
         uses: simple-elf/allure-report-action@master
         id: allure-report
         with:
@@ -44,6 +40,14 @@ jobs:
           gh_pages: gh-pages
           allure_report: allure-report
           allure_history: allure-history
+
+      - name: Upload Desktop Test Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-allure-results
+          path: allure-results
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Deploy report to Github Pages
         if: github.event_name == 'push'
@@ -53,10 +57,54 @@ jobs:
           PUBLISH_BRANCH: gh-pages
           PUBLISH_DIR: allure-history
 
-      - name: Upload Test Result
-        uses: actions/upload-artifact@v3
+  mobile-tests:
+    name: Playwright Mobile Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
-          name: allure-results
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Mobile tests
+        run: npm run test:mobile
+
+      # Allure reporting
+      - name: Get Allure history
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Generate Allure Report
+        uses: simple-elf/allure-report-action@master
+        id: allure-report
+        with:
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+
+      - name: Upload Mobile Test Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-allure-results
           path: allure-results
           if-no-files-found: error
           retention-days: 30
+
+      - name: Deploy report to Github Pages
+        if: github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          PERSONAL_TOKEN: ${{ secrets.TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: allure-history
