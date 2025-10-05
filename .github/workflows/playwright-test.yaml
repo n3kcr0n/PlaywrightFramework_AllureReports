@@ -21,6 +21,9 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      - name: Create snapshot directories
+        run: mkdir -p tests/desktop/goodpractice/visualTesting.spec.ts-snapshots
+
       - name: Run Desktop tests
         run: npm run test:desktop
 
@@ -72,6 +75,9 @@ jobs:
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+
+      - name: Create snapshot directories
+        run: mkdir -p tests/mobile/mobile_test.spec.ts-snapshots
 
       - name: Run Mobile tests
         run: npm run test:mobile
