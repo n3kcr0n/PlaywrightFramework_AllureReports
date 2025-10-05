@@ -11,11 +11,12 @@ test('TEST01: Standar user should be able to login', async ({ page }) => {
         pm.sauceDemoLoginPage().login(config.processEnv.username, config.processEnv.password)
     })
     await expect(page.getByText('Products')).toBeVisible()
-    await page.context().storageState({ path: './testSessionStorage/sauceDemoLoginState.json' });
-    //save login state
+
     /* 
+    save login state
         Disclaimer: this is just for demo purposes and this implementation is not ideal, 
         it should be implemented with its own auth.setup.ts and setup as a global setup under config
      */
+    await page.context().storageState({ path: './testSessionStorage/sauceDemoLoginState.json' });
 });
 
