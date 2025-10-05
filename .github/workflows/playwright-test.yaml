@@ -6,111 +6,44 @@ on:
 
 jobs:
   desktop-tests:
-    name: Playwright Desktop Tests
+    name: Playwright E2E Tests
     runs-on: ubuntu-latest
     steps:
+      # 1. Checkout repo
       - uses: actions/checkout@v4
 
+      # 2. Setup Node.js
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
-      - name: Install dependencies
-        run: npm ci
+      # 3. Install dependencies
+      - run: npm ci
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      # 4. Install Playwright browsers
+      - run: npx playwright install --with-deps
 
-      - name: Create snapshot directories
-        run: mkdir -p tests/desktop/goodpractice/visualTesting.spec.ts-snapshots
+      # 5. Create snapshot folders to avoid ENOENT
+      - name: Prepare snapshot folders
+        run: |
+          mkdir -p tests/desktop/goodpractice/visualTesting.spec.ts-snapshots
+          mkdir -p tests/mobile/mobile_test.spec.ts-snapshots
 
+      # 6. Optional: update snapshots if needed (run locally first to commit baselines)
+      # - run: npx playwright test --update-snapshots
+
+      # 7. Run Playwright tests
       - name: Run Desktop tests
         run: npm run test:desktop
-
-      # Allure reporting
-      - name: Get Allure history
-        uses: actions/checkout@v4
-        continue-on-error: true
-        with:
-          ref: gh-pages
-          path: gh-pages
-
-      - name: Generate Allure Report
-        uses: simple-elf/allure-report-action@master
-        id: allure-report
-        with:
-          allure_results: allure-results
-          gh_pages: gh-pages
-          allure_report: allure-report
-          allure_history: allure-history
-
-      - name: Upload Desktop Test Result
-        uses: actions/upload-artifact@v4
-        with:
-          name: desktop-allure-results
-          path: allure-results
-          if-no-files-found: error
-          retention-days: 30
-
-      - name: Deploy report to Github Pages
-        if: github.event_name == 'push'
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          PERSONAL_TOKEN: ${{ secrets.TOKEN }}
-          PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: allure-history
-
-  mobile-tests:
-    name: Playwright Mobile Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      - name: Create snapshot directories
-        run: mkdir -p tests/mobile/mobile_test.spec.ts-snapshots
 
       - name: Run Mobile tests
         run: npm run test:mobile
 
-      # Allure reporting
-      - name: Get Allure history
-        uses: actions/checkout@v4
-        continue-on-error: true
-        with:
-          ref: gh-pages
-          path: gh-pages
-
-      - name: Generate Allure Report
-        uses: simple-elf/allure-report-action@master
-        id: allure-report
-        with:
-          allure_results: allure-results
-          gh_pages: gh-pages
-          allure_report: allure-report
-          allure_history: allure-history
-
-      - name: Upload Mobile Test Result
+      # 8. Upload test results as artifacts
+      - name: Upload Playwright test results
         uses: actions/upload-artifact@v4
         with:
-          name: mobile-allure-results
-          path: allure-results
+          name: playwright-test-results
+          path: test-results
           if-no-files-found: error
           retention-days: 30
-
-      - name: Deploy report to Github Pages
-        if: github.event_name == 'push'
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          PERSONAL_TOKEN: ${{ secrets.TOKEN }}
-          PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: allure-history

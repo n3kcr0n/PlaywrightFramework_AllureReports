@@ -7,7 +7,9 @@ test.describe('Saucedemo Visual Testing', () => {
         await test.step('Load the login page', async () => {
             await pm.qaCartSignUpPage().load()
         })
-        await expect(page).toHaveScreenshot('qaCartSignUp.png', { animations: 'disabled' });
+        await expect(page).toHaveScreenshot(['qaCartSignUp-chromium-win32.png',
+            'qaCartSignUp-firefox-win32.png', 'qaCartSignUp-webkit-win32.png'
+        ], { animations: 'disabled' });
     })
 
     /* 
