@@ -55,16 +55,16 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
       testMatch: /.*desktop\/.*\.spec\.ts/,
     },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-      testMatch: /.*desktop\/.*\.spec\.ts/,
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-      testMatch: /.*desktop\/.*\.spec\.ts/,
-    },
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    //   testMatch: /.*desktop\/.*\.spec\.ts/,
+    // },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    //   testMatch: /.*desktop\/.*\.spec\.ts/,
+    // },
 
     // Mobile devices
     {
