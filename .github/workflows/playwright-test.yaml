@@ -62,7 +62,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-        - name: Upload Test Result Playwright
+      - name: Upload Test Result Playwright
         uses: actions/upload-artifact@v4
         with:
           name: assets-for-download
