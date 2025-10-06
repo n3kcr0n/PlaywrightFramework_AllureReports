@@ -30,7 +30,7 @@ jobs:
           mkdir -p tests/mobile/mobile_test.spec.ts-snapshots
 
       # 6. Optional: update snapshots if needed (run locally first to commit baselines)
-      # - run: npx playwright test --update-snapshots
+      - run: npx playwright test --update-snapshots
 
       # 7. Run Playwright tests
       - name: Run Desktop tests
