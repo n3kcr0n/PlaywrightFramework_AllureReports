@@ -14,7 +14,7 @@ export default defineConfig({
   timeout: 120000,
 
   // Optimized snapshot path to avoid collisions
-  snapshotPathTemplate: '{testFileDir}/__snapshots__/{testName}-{projectName}{ext}',
+  //snapshotPathTemplate: '{testFileDir}/__snapshots__/{testName}-{projectName}{ext}',
 
   // Run tests in files in parallel
   fullyParallel: true,
@@ -36,7 +36,7 @@ export default defineConfig({
 
   // Shared test options
   use: {
-    screenshot: 'only-on-failure',
+    screenshot: 'on',
     trace: 'retain-on-failure',
     video: 'retain-on-failure',
     // baseURL can be uncommented if needed
