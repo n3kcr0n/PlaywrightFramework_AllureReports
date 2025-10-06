@@ -10,3 +10,4 @@ node_modules/
 /visualTesting.spec.ts-snapshots/
 /mobile_test.spec.ts-snapshots/
 allure-results
+/artifacts/

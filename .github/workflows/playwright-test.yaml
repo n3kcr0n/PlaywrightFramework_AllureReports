@@ -27,11 +27,14 @@ jobs:
       # 4. Install Playwright browsers with dependencies
       - run: npx playwright install --with-deps
 
-      # 5. Run Playwright tests with JSON reporter
-      - name: Run Playwright Tests
-        run: npx playwright test --reporter=json,artifacts/results.json
+      # 5. Ensure artifacts folder exists
+      - run: mkdir -p artifacts
 
-      # 6. Upload artifacts by project/browser
+      # 6. Run Playwright tests with JSON reporter
+      - name: Run Playwright Tests
+        run: npx playwright test --reporter="json=artifacts/results.json"
+
+      # 7. Upload artifacts by project/browser
       - name: Upload Playwright Chromium Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -68,6 +71,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mobile-safari-artifacts
-          path: test-results/mobile-safari/**/*
+          path: artifacts/mobile-safari/**/*
           if-no-files-found: ignore
           retention-days: 30
