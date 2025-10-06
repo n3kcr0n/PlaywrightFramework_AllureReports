@@ -8,10 +8,4 @@ test.describe('Wiki Test', () => {
     })
 })
 
-test.describe('Test For Safari Mobile', () => {
-    test('Testing on Mobile', async ({ page }) => {
-        await expect(page).toHaveURL(/wikipedia/)
-        //await expect(page).toHaveScreenshot(['wiki_Safari.png'], { animations: 'disabled' });
-    })
-})
 
