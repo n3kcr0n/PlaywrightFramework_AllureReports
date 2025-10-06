@@ -1,49 +1,73 @@
-name: Playwright Tests
+name: Playwright E2E Tests
 
 on:
   push:
     branches: [main]
 
 jobs:
-  desktop-tests:
-    name: Playwright E2E Tests
+  e2e-tests:
+    name: Playwright E2E
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+
     steps:
-      # 1. Checkout repo
+      # 1. Checkout repository
       - uses: actions/checkout@v4
 
       # 2. Setup Node.js
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ matrix.node-version }}
 
       # 3. Install dependencies
       - run: npm ci
 
-      # 4. Install Playwright browsers
+      # 4. Install Playwright browsers with dependencies
       - run: npx playwright install --with-deps
 
-      # 5. Create snapshot folders to avoid ENOENT
-      - name: Prepare snapshot folders
-        run: |
-          mkdir -p tests/desktop/goodpractice/visualTesting.spec.ts-snapshots
-          mkdir -p tests/mobile/mobile_test.spec.ts-snapshots
+      # 5. Run Playwright tests with JSON reporter
+      - name: Run Playwright Tests
+        run: npx playwright test --reporter=json,artifacts/results.json
 
-      # 6. Optional: update snapshots if needed (run locally first to commit baselines)
-      - run: npx playwright test --update-snapshots
-
-      # 7. Run Playwright tests
-      - name: Run Desktop tests
-        run: npm run test:desktop
-
-      - name: Run Mobile tests
-        run: npm run test:mobile
-
-      # 8. Upload test results as artifacts
-      - name: Upload Playwright test results
+      # 6. Upload artifacts by project/browser
+      - name: Upload Playwright Chromium Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-test-results
-          path: test-results
-          if-no-files-found: error
+          name: chromium-artifacts
+          path: artifacts/chromium/**/*
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload Playwright Firefox Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firefox-artifacts
+          path: artifacts/firefox/**/*
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload Playwright Webkit Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: webkit-artifacts
+          path: artifacts/webkit/**/*
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload Playwright Mobile Chrome Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-chrome-artifacts
+          path: artifacts/mobile-chrome/**/*
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Upload Playwright Mobile Safari Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-safari-artifacts
+          path: test-results/mobile-safari/**/*
+          if-no-files-found: ignore
           retention-days: 30

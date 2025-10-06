@@ -1,14 +1,14 @@
 import { expect, test } from "@playwright/test";
 import PageManager from "../../../page_objects/pageManager";
 
-test.describe('Saucedemo Visual Testing', () => {
-    test('Check for ui changes', async ({ page }) => {
+test.describe('Sign up page', () => {
+    test('VisualTest', async ({ page }) => {
         const pm = new PageManager(page)
         await test.step('Load the login page', async () => {
             await pm.qaCartSignUpPage().load()
         })
-        await expect(page).toHaveScreenshot(['qaCartSignUp-chromium-win32.png'
-        ], { animations: 'disabled' });
+        await expect(page).toHaveScreenshot('signUp.png'
+            , { animations: 'disabled' });
     })
 
     /* 
