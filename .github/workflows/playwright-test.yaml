@@ -27,50 +27,45 @@ jobs:
       # 4. Install Playwright browsers with dependencies
       - run: npx playwright install --with-deps
 
-      # 5. Ensure artifacts folder exists
-      - run: mkdir -p artifacts
-
       # 6. Run Playwright tests
       - name: Run Playwright tests
         run: npm run test
 
-      # 7. Upload artifacts by project/browser
-      - name: Upload Playwright Chromium Artifacts
+      - name: Get Allure history
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Allure Report action from marketplace
+        uses: simple-elf/allure-report-action@master
+        id: allure-report
+        with:
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+
+      - name: Deploy report to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          PERSONAL_TOKEN: ${{ secrets.TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: allure-history
+
+      - name: Upload Test Result Allure
         uses: actions/upload-artifact@v4
         with:
-          name: chromium-artifacts
-          path: artifacts/chromium/**/*
-          if-no-files-found: ignore
+          name: assets-for-download
+          path: allure-results
+          if-no-files-found: error
           retention-days: 30
 
-      - name: Upload Playwright Firefox Artifacts
+        - name: Upload Test Result Playwright
         uses: actions/upload-artifact@v4
         with:
-          name: firefox-artifacts
-          path: artifacts/firefox/**/*
-          if-no-files-found: ignore
-          retention-days: 30
-
-      - name: Upload Playwright Webkit Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: webkit-artifacts
-          path: artifacts/webkit/**/*
-          if-no-files-found: ignore
-          retention-days: 30
-
-      - name: Upload Playwright Mobile Chrome Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: mobile-chrome-artifacts
-          path: artifacts/mobile-chrome/**/*
-          if-no-files-found: ignore
-          retention-days: 30
-
-      - name: Upload Playwright Mobile Safari Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: mobile-safari-artifacts
-          path: artifacts/mobile-safari/**/*
-          if-no-files-found: ignore
+          name: assets-for-download
+          path: playwright-report
+          if-no-files-found: error
           retention-days: 30

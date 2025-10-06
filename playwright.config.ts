@@ -10,7 +10,6 @@ dotenv.config();
 export default defineConfig({
   globalSetup: "./authSessionStorage/auth.setup.ts",
   testDir: './tests',
-  outputDir: 'artifacts',
   timeout: 120000,
 
   // Optimized snapshot path to avoid collisions
