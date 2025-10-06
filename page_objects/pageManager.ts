@@ -5,32 +5,42 @@ import SauceDemoLoginPage from "./sauceDemoLoginPage";
 import SauceDemoProductPage from "./sauceDemoProductPage";
 import SauceDemoCheckoutOverviewPage from "./sauceDemoProductOverviewPage";
 import SauceDemoCheckoutPage from "./sauceDemoCheckoutPage";
+import sauceDemoCartPage from "./sauceDemoCartPage";
+import CustomerInfoPage from "./sauceDemoCustomerInfoPage";
 
 
-export default class PageManager{
-    constructor(private readonly page:Page){}
+export default class PageManager {
+    constructor(private readonly page: Page) { }
 
-    qaCartSignUpPage(){
+    qaCartSignUpPage() {
         return new QaCartSignUpPage(this.page)
     }
 
-    qaCartTodo(){
+    qaCartTodo() {
         return new QaCartTodoPage(this.page)
     }
 
-    sauceDemoLoginPage(){
+    sauceDemoLoginPage() {
         return new SauceDemoLoginPage(this.page)
     }
 
-    sauceDemoProductPage(){
+    sauceDemoProductPage() {
         return new SauceDemoProductPage(this.page)
     }
 
-    sauceDemoProductOverviewPage(){
+    sauceDemoCartPage() {
+        return new sauceDemoCartPage(this.page)
+    }
+
+    sauceDemoCustomerInfoPage() {
+        return new CustomerInfoPage(this.page)
+    }
+
+    sauceDemoProductOverviewPage() {
         return new SauceDemoCheckoutOverviewPage(this.page)
     }
 
-    sauceDemoCheckoutPage(){
+    sauceDemoCheckoutPage() {
         return new SauceDemoCheckoutPage(this.page)
     }
 }
