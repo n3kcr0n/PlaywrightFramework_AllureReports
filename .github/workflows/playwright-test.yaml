@@ -30,9 +30,9 @@ jobs:
       # 5. Ensure artifacts folder exists
       - run: mkdir -p artifacts
 
-      # 6. Run Playwright tests with JSON reporter
-      - name: Run Playwright Tests
-        run: npx playwright test --reporter="json=artifacts/results.json"
+      # 6. Run Playwright tests
+      - name: Run Playwright tests
+        run: npm run test
 
       # 7. Upload artifacts by project/browser
       - name: Upload Playwright Chromium Artifacts
