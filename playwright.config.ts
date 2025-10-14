@@ -29,8 +29,8 @@ export default defineConfig({
 
   // Reporters
   reporter: [
-    ['html', { open: 'never' }],
-    ['allure-playwright'],
+    ['html', { outputFolder: 'artifacts/playwright-report', open: 'never' }],
+    ['allure-playwright', { outputFolder: 'artifacts/allure-results' }],
   ],
 
   // Shared test options
