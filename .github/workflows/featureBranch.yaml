@@ -3,7 +3,7 @@ name: Feature Branch Workflow
 on:
   push:
     branches:
-      - main # Run when a PR targets main (adjust if needed)
+      - main # Run when pushing to main branch (adjust if needed)
 
 jobs:
   e2e-tests:
@@ -73,14 +73,14 @@ jobs:
             sudo rm -rf ./artifacts/allure-history/.git
           fi
 
-      # 🚀 Deploy to GitHub Pages (publishes Allure report)
+      # 🚀 Deploy report to GitHub Pages
       - name: Deploy report to GitHub Pages
         if: github.event_name == 'push'
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
-          publish_dir: artifacts/allure-report
+          publish_dir: artifacts/allure-history
           allow_empty_commit: true
 
       # 📤 Upload Allure results
@@ -92,16 +92,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      # 📤 Upload Allure HTML report
-      - name: Upload Allure HTML Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-html-report
-          path: artifacts/allure-report
-          if-no-files-found: error
-          retention-days: 14
-
-      # 🧾 Upload Playwright HTML report for quick access
+      # 🧾 Upload Playwright HTML report
       - name: Upload Playwright HTML Report
         uses: actions/upload-artifact@v4
         with:
@@ -109,3 +100,16 @@ jobs:
           path: artifacts/playwright-report
           if-no-files-found: error
           retention-days: 7
+
+      # 🧭 Post test summary with report links
+      - name: 📊 Post Allure Report Link
+        if: always()
+        run: |
+          echo "## 🎉 Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- 🧩 **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- 🧑‍💻 **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- 🕒 **Run Date:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📈 Reports" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔗 **Allure Report:** [View Live Report](https://n3kcr0n.github.io/PlaywrightFramework_AllureReports/)" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔗 **Playwright HTML Report (Artifact):** Available in [Artifacts Section](#artifacts)" >> $GITHUB_STEP_SUMMARY
