@@ -48,8 +48,8 @@ jobs:
       - name: Get Allure history
         uses: actions/checkout@v4
         with:
-        ref: gh-pages
-        path: gh-pages
+          ref: gh-pages
+          path: gh-pages
 
       # 🧱 Generate Allure report
       - name: Generate Allure Report
