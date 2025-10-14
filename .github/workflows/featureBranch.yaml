@@ -45,11 +45,11 @@ jobs:
         run: npm run test
 
       # 🧾 Get Allure history
-      - name: Get Allure history
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages
+      #- name: Get Allure history
+      #uses: actions/checkout@v4
+      #with:
+      #ref: gh-pages
+      #path: gh-pages
 
       # 🧱 Generate Allure report
       - name: Generate Allure Report
