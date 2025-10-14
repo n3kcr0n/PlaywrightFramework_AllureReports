@@ -63,11 +63,13 @@ jobs:
 
       # 🚀 Deploy to GitHub Pages
       - name: Deploy report to GitHub Pages
+        if: github.event_name == 'push'
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-history
+          allow_empty_commit: true
 
       # 📤 Upload test artifacts
       - name: Upload Test Result
