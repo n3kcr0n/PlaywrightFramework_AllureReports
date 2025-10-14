@@ -73,14 +73,14 @@ jobs:
             sudo rm -rf ./artifacts/allure-history/.git
           fi
 
-      # 🚀 Deploy to GitHub Pages
+      # 🚀 Deploy to GitHub Pages (publishes Allure report)
       - name: Deploy report to GitHub Pages
         if: github.event_name == 'push'
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
-          publish_dir: artifacts/allure-history
+          publish_dir: artifacts/allure-report
           allow_empty_commit: true
 
       # 📤 Upload Allure results
@@ -92,7 +92,16 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      # 🧾 Upload only Playwright HTML report for quick access
+      # 📤 Upload Allure HTML report
+      - name: Upload Allure HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-html-report
+          path: artifacts/allure-report
+          if-no-files-found: error
+          retention-days: 14
+
+      # 🧾 Upload Playwright HTML report for quick access
       - name: Upload Playwright HTML Report
         uses: actions/upload-artifact@v4
         with:
