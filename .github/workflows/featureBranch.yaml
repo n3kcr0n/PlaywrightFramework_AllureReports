@@ -40,13 +40,12 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      # 🧪 Run Playwright tests and store reports under artifacts/
+      # 🧪 Run Playwright tests and generate reports
       - name: Run Playwright tests
         run: |
-          mkdir -p artifacts
-          npx playwright test --reporter=allure-playwright,html --output=artifacts/playwright-report
+          npx playwright test --reporter=allure-playwright,html --output=playwright-report
         env:
-          ALLURE_RESULTS_DIR: artifacts/allure-results
+          ALLURE_RESULTS_DIR: allure-results
 
       # 🧾 Get Allure history
       - name: Get Allure history
@@ -60,17 +59,17 @@ jobs:
         uses: simple-elf/allure-report-action@master
         id: allure-report
         with:
-          allure_results: artifacts/allure-results
+          allure_results: allure-results
           gh_pages: gh-pages
-          allure_report: artifacts/allure-report
-          allure_history: artifacts/allure-history
+          allure_report: allure-report
+          allure_history: allure-history
 
       # 🧹 Clean leftover .git folders (fix for EACCES)
       - name: Clean Allure History Git Metadata
         run: |
-          if [ -d "./artifacts/allure-history/.git" ]; then
+          if [ -d "./allure-history/.git" ]; then
             echo "Cleaning leftover .git directory..."
-            sudo rm -rf ./artifacts/allure-history/.git
+            sudo rm -rf ./allure-history/.git
           fi
 
       # 🚀 Deploy to GitHub Pages
@@ -80,7 +79,7 @@ jobs:
         with:
           personal_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
-          publish_dir: artifacts/allure-history
+          publish_dir: allure-history
           allow_empty_commit: true
 
       # 📤 Upload Allure results
@@ -88,7 +87,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: allure-results
-          path: artifacts/allure-results
+          path: allure-results
           if-no-files-found: error
           retention-days: 30
 
@@ -97,15 +96,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: allure-html-report
-          path: artifacts/allure-report
+          path: allure-report
           if-no-files-found: error
           retention-days: 14
 
-      # 🧾 Upload only Playwright HTML report for quick access
+      # 🧾 Upload Playwright HTML report for quick access
       - name: Upload Playwright HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: playwright-html-report
-          path: artifacts/playwright-report
+          path: playwright-report
           if-no-files-found: error
           retention-days: 7
