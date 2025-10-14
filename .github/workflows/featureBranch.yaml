@@ -3,7 +3,7 @@ name: Feature Branch Workflow
 on:
   push:
     branches:
-      - main # Run when pushing to main branch (adjust if needed)
+      - main # Run when a PR targets main (adjust if needed)
 
 jobs:
   e2e-tests:
@@ -40,30 +40,26 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      # 🧪 Run Playwright tests and store reports under artifacts/
+      # 🧪 Run Playwright tests
       - name: Run Playwright tests
-        run: |
-          mkdir -p artifacts
-          npx playwright test --reporter=allure-playwright,html --output=artifacts/playwright-report
-        env:
-          ALLURE_RESULTS_DIR: artifacts/allure-results
+        run: npm run test
 
       # 🧾 Get Allure history
       - name: Get Allure history
         uses: actions/checkout@v4
         with:
-          ref: gh-pages
-          path: gh-pages
+        ref: gh-pages
+        path: gh-pages
 
       # 🧱 Generate Allure report
       - name: Generate Allure Report
         uses: simple-elf/allure-report-action@master
         id: allure-report
         with:
-          allure_results: artifacts/allure-results
+          allure_results: allure-results
           gh_pages: gh-pages
-          allure_report: artifacts/allure-report
-          allure_history: artifacts/allure-history
+          allure_report: allure-report
+          allure_history: allure-history
 
       # 🧹 Clean leftover .git folders (fix for EACCES)
       - name: Clean Allure History Git Metadata
@@ -73,44 +69,21 @@ jobs:
             sudo rm -rf ./artifacts/allure-history/.git
           fi
 
-      # 🚀 Deploy report to GitHub Pages
+      # 🚀 Deploy to GitHub Pages
       - name: Deploy report to GitHub Pages
         if: github.event_name == 'push'
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
-          publish_dir: artifacts/allure-history
+          publish_dir: allure-history
           allow_empty_commit: true
 
-      # 📤 Upload Allure results
-      - name: Upload Allure Results
+      # 📤 Upload test artifacts
+      - name: Upload Test Result
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results
-          path: artifacts/allure-results
+          name: assets-for-download
+          path: allure-results
           if-no-files-found: error
           retention-days: 30
-
-      # 🧾 Upload Playwright HTML report
-      - name: Upload Playwright HTML Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-html-report
-          path: artifacts/playwright-report
-          if-no-files-found: error
-          retention-days: 7
-
-      # 🧭 Post test summary with dynamic report links
-      - name: 📊 Post Allure Report Link
-        if: always()
-        run: |
-          REPO_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-          echo "## 🎉 Test Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- 🧩 **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- 🧑‍💻 **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "- 🕒 **Run Date:** $(date)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📈 Reports" >> $GITHUB_STEP_SUMMARY
-          echo "- 🔗 **Allure Report:** [View Live Report](${REPO_URL})" >> $GITHUB_STEP_SUMMARY
-          echo "- 💾 **Playwright HTML Report:** Available in [Artifacts Section](#artifacts)" >> $GITHUB_STEP_SUMMARY
