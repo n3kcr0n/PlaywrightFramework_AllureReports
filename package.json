@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npx playwright test",
+    "test:Debug": "npx playwright test --debug",
+    "test:UI": "npx playwright test --ui",
     "test:desktop": "playwright test --project=chromium --project=firefox --project=webkit",
     "test:mobile": "playwright test --project='Mobile Chrome (iPhone 12)' --project='Mobile Safari (iPhone 12)'"
   },
