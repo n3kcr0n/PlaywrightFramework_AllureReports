@@ -40,9 +40,13 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      # 🧪 Run Playwright tests
+      # 🧪 Run Playwright tests and store reports under artifacts/
       - name: Run Playwright tests
-        run: npm run test
+        run: |
+          mkdir -p artifacts
+          npx playwright test --reporter=allure-playwright,html --output=artifacts/playwright-report
+        env:
+          ALLURE_RESULTS_DIR: artifacts/allure-results
 
       # 🧾 Get Allure history
       - name: Get Allure history
@@ -56,10 +60,10 @@ jobs:
         uses: simple-elf/allure-report-action@master
         id: allure-report
         with:
-          allure_results: allure-results
+          allure_results: artifacts/allure-results
           gh_pages: gh-pages
-          allure_report: allure-report
-          allure_history: allure-history
+          allure_report: artifacts/allure-report
+          allure_history: artifacts/allure-history
 
       # 🧹 Clean leftover .git folders (fix for EACCES)
       - name: Clean Allure History Git Metadata
@@ -76,14 +80,32 @@ jobs:
         with:
           personal_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history
+          publish_dir: artifacts/allure-history
           allow_empty_commit: true
 
-      # 📤 Upload test artifacts
-      - name: Upload Test Result
+      # 📤 Upload Allure results
+      - name: Upload Allure Results
         uses: actions/upload-artifact@v4
         with:
-          name: assets-for-download
-          path: allure-results
+          name: allure-results
+          path: artifacts/allure-results
           if-no-files-found: error
           retention-days: 30
+
+      # 📤 Upload Allure HTML report
+      - name: Upload Allure HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-html-report
+          path: artifacts/allure-report
+          if-no-files-found: error
+          retention-days: 14
+
+      # 🧾 Upload only Playwright HTML report for quick access
+      - name: Upload Playwright HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: artifacts/playwright-report
+          if-no-files-found: error
+          retention-days: 7
