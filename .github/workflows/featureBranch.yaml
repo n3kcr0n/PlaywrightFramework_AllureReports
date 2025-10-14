@@ -63,7 +63,15 @@ jobs:
           allure_results: artifacts/allure-results
           gh_pages: gh-pages
           allure_report: artifacts/allure-report
-          allure_history: allure-history
+          allure_history: artifacts/allure-history
+
+      # 🧹 Clean leftover .git folders (fix for EACCES)
+      - name: Clean Allure History Git Metadata
+        run: |
+          if [ -d "./artifacts/allure-history/.git" ]; then
+            echo "Cleaning leftover .git directory..."
+            sudo rm -rf ./artifacts/allure-history/.git
+          fi
 
       # 🚀 Deploy to GitHub Pages
       - name: Deploy report to GitHub Pages
@@ -72,15 +80,15 @@ jobs:
         with:
           personal_token: ${{ secrets.TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history
+          publish_dir: artifacts/allure-history
           allow_empty_commit: true
 
-      # 📤 Upload test artifacts
-      - name: Upload Test Result
+      # 📤 Upload Allure results
+      - name: Upload Allure Results
         uses: actions/upload-artifact@v4
         with:
-          name: assets-for-download
-          path: allure-results
+          name: allure-results
+          path: artifacts/allure-results
           if-no-files-found: error
           retention-days: 30
 
